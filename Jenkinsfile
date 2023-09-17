@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Cloning') {
             steps {
-                git branch: 'main', credentialsId: 'java_repo_creds', url: 'https://github.com/github-cloudcontainer/java-application.git'
+                git branch: 'main', url: 'https://github.com/github-cloudcontainer/java.git' // Updated URL here
             }
         }
         
@@ -45,19 +45,19 @@ pipeline {
         stage('Commit to Deploy') {
             steps {
                 script {
-		                // Update image tag in deployment.yaml
+                    // Update image tag in deployment.yaml
                     sh "sed -i 's|021059192275.dkr.ecr.ap-south-1.amazonaws.com/my-java-application:[0-9]*|${DOCKER_IMAGE}:${BUILD_NUMBER}|g' deployment.yaml"
                     // Set Git credentials
-		                withCredentials([usernamePassword(credentialsId: 'java_repo_creds', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-		                sh '''
-			                  git config user.email "githubcloudcontainer@gmail.com"
-			                  git config user.name "github-cloudcontainer"
-			                  git add deployment.yaml
-			                  git commit -m "Update image tag to ${BUILD_NUMBER}"
-			                  git remote set-url origin https://$GIT_USERNAME:$GIT_PASSWORD@github.com/github-cloudcontainer/java-application.git
-			                  git push
-			              '''
-				}
+                    withCredentials([usernamePassword(credentialsId: 'java_repo_creds', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                        sh '''
+                            git config user.email "githubcloudcontainer@gmail.com"
+                            git config user.name "github-cloudcontainer"
+                            git add deployment.yaml
+                            git commit -m "Update image tag to ${BUILD_NUMBER}"
+                            git remote set-url origin https://$GIT_USERNAME:$GIT_PASSWORD@github.com/github-cloudcontainer/java.git // Updated URL here
+                            git push
+                        '''
+                    }
                 }
             }
         }        
